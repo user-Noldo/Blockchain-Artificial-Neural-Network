@@ -1,0 +1,213 @@
+//@version=4
+
+//MIT License
+
+//Copyright (c) 2019 user-Noldo
+
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+
+//The above copyright notice and this permission notice shall be included in all
+//copies or substantial portions of the Software.
+
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
+
+
+
+study("ANN BTC BLOCKCHAIN")
+src = close[0]
+zero = 0.00
+
+lights          = input(title="Barcolor I / 0 ? ", options=["ON", "OFF"], defval="OFF")
+
+// Definition : BLOCKCHAIN PARAMETERS
+
+
+// AVERAGE BLOCK SIZE
+
+block = 'QUANDL:BCHAIN/AVBLS'
+
+_block = security(block,'D', close[0])
+
+// API BLOCKCHAIN SIZE
+
+bsize = 'QUANDL:BCHAIN/BLCHS'
+
+_bsize = security(bsize,'D', close[0])
+
+// MINERS REVENUE
+
+minrev = 'QUANDL:BCHAIN/MIREV'
+
+_minrev = security(minrev,'D', close[0])
+
+// HASH RATE 
+
+hrate = 'QUANDL:BCHAIN/HRATE'
+
+_hrate = security(hrate,'D', close[0])
+
+// BITCOIN COST PER TRANSACTION 
+
+cptra = 'QUANDL:BCHAIN/CPTRA'
+
+_cptra = security(cptra,'D', close[0])
+
+// BITCOIN USD EXCHANGE TRADE VOLUME 
+
+trvou = 'QUANDL:BCHAIN/TRVOU'
+
+_trvou = security(trvou,'D', close[0])
+
+// BITCOIN TOTAL NUMBER OF TRANSACTIONS 
+
+ntrat = 'QUANDL:BCHAIN/NTRAT'
+
+_ntrat = security(ntrat,'D', close[0])
+
+// CHANGE 
+
+// DEEP LEARNING INDICATORS
+
+
+_indicator1 = ((_block - _block[1] ) / (_block[1]))
+_indicator2 = ((_bsize - _bsize[1] ) / (_bsize[1]))
+_indicator3 = ((_minrev - _minrev[1] ) / (_minrev[1]))
+_indicator4 = ((_hrate - _hrate[1] ) / (_hrate[1]))
+_indicator5 = ((_cptra - _cptra[1] ) / (_cptra[1]))
+_indicator6 = ((_trvou - _trvou[1] ) / (_trvou[1]))
+_indicator7  = ((_ntrat - _ntrat[1] ) / (_ntrat[1]))
+src_chg  = ((src - src[1]) / (src[1]))
+
+
+// Inputs on Tangent Function : 
+
+tangentdiff(_src) => nz((_src - _src[1]) / _src[1] ) 
+
+
+// Deep Learning Activation Function (Tanh) : 
+
+ActivationFunctionTanh(v) => (1 - exp(-2 * v))/( 1 + exp(-2 * v))
+
+
+// DEEP LEARNING 
+
+// INPUTS : 
+
+input_1 = tangentdiff(_indicator1)
+input_2 = tangentdiff(_indicator2)
+input_3 = tangentdiff(_indicator3)
+input_4 = tangentdiff(_indicator4)
+input_5 = tangentdiff(_indicator5)
+input_6 = tangentdiff(_indicator6)
+input_7 = tangentdiff(_indicator7)
+
+
+// LAYERS : 
+
+// Input Layers 
+
+n_0 = ActivationFunctionTanh(input_1 + 0)   
+n_1 = ActivationFunctionTanh(input_2 + 0) 
+n_2 = ActivationFunctionTanh(input_3 + 0) 
+n_3 = ActivationFunctionTanh(input_4 + 0) 
+n_4 = ActivationFunctionTanh(input_5 + 0)
+n_5 = ActivationFunctionTanh(input_6 + 0)
+n_6 = ActivationFunctionTanh(input_7 + 0)
+
+// Hidden Layer 1 Node : 
+
+n_7 = ActivationFunctionTanh(-4.781763  * n_0  + 10.461760 * n_1  + 3.315506  * n_2  + -2.904398 * n_3  + -3.395257  * n_4  + 1.198382  * n_5  + 
+                             -0.673757  * n_6 + -4.189406 ) 
+
+n_8 = ActivationFunctionTanh(13.037002 * n_0  + -23.995687 * n_1  + -7.415491  * n_2  + 6.033804  * n_3  + 1.473729  * n_4  + -1.364151 * n_5  + 
+                             1.505107  * n_6  + 7.924747) 
+
+n_9 = ActivationFunctionTanh(6.872487  * n_0  + -8.574429  * n_1  + 3.611399 * n_2  + 0.685256 * n_3  + 6.047363 * n_4  + -2.365322  * n_5  + 
+                             -8.248883 * n_6 + -2.230143 )
+                               
+n_10 = ActivationFunctionTanh(8.357794   * n_0  + 18.730190 * n_1  + 45.193578 * n_2  + -19.113609  * n_3  + 22.992774  * n_4  + -43.047078 * n_5  + 
+                              -53.282232 * n_6 + -3.277878 ) 
+
+n_11 = ActivationFunctionTanh(-0.439029  * n_0  + 49.038087  * n_1  + 72.164782  * n_2  + -43.762872 * n_3  + 23.856610 * n_4  + -73.080145 * n_5  + 
+                              -56.878190 * n_6 + -6.168150 ) 
+
+// OUTPUT
+
+_output = ActivationFunctionTanh(-19.795264 * n_7  + -19.868848  * n_8  + -2.712585 * n_9  + 4.355774 * n_10  + -3.682000 * n_11  + 19.939365 ) 
+
+
+// Plot data 
+
+_chg_src = tangentdiff(src) * 100
+
+_seed = (_output - _chg_src) 
+
+
+// MACD : SEED 
+
+fastLength   = 12
+slowlength   = 26
+signalLength = 9
+
+
+macd   = ema(_seed, fastLength) - ema(_seed, slowlength)
+signal = ema(macd, signalLength)
+	   
+
+hist = macd - signal
+
+// Conditions : 
+
+positive_condition = hist < 0 
+negative_condition = hist > 0
+
+neg_moment = crossover(macd,signal)
+pos_moment = crossunder(macd,signal) 
+
+col_bg = pos_moment ? color.teal : neg_moment ? color.maroon : na
+
+//Plot data
+
+col_hist() => positive_condition ? color.new(#F5FFFA,0) : negative_condition ? color.new(#FF355E,0) : color.new(color.yellow,0)
+col_histo = col_hist()
+
+//Plot data
+
+hline(0, color=#FFB300, linewidth = 2)
+plot(hist, color=(positive_condition ? #00A86B : #D40000), style=plot.style_histogram,linewidth= 5 , title="Area", transp=30)
+plot(hist, color=col_histo,style =plot.style_histogram, title="Forecast", linewidth=1)
+bgcolor(col_bg , transp = 58 , title = "Background Color")
+
+// Switchable Barcolor Preference 
+
+_lights = 0.00 
+if (lights=="ON")
+
+    _lights:= 1.00
+    
+if (lights=="OFF")
+
+    _lights:= -1.00   
+
+
+bcolor_on  = _lights ==  1.00
+bcolor_off = _lights == -1.00
+
+barcolor(negative_condition and bcolor_on ? color.red : positive_condition and bcolor_on ? color.green : na )
+
+// Alerts 
+
+alertcondition(pos_moment , title='Buy Signal' , message='Buy Signal ')
+alertcondition(neg_moment , title='Sell Signal', message='Sell Signal ')
+
