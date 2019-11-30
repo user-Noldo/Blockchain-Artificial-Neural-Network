@@ -24,7 +24,7 @@
 
 
 
-study("ANN BTC BLOCKCHAIN")
+study("Blockchain Artificial Neural Networks")
 src = close[0]
 zero = 0.00
 
